@@ -1,0 +1,42 @@
+syntax = "proto3";
+package clientProto;
+option go_package = "NekoImageWorkflowMicro/proto/clientTransform";
+
+enum ClientType {
+  LOCAL = 0;
+  API = 1;
+}
+
+message FileData {
+  string fileUUID = 1;
+  bytes fileContent = 2;
+}
+
+// pre-request, if the same uuid exists it is not uploaded
+message FilePreRequest{
+  string clientID = 1;
+  ClientType clientType = 2;
+  repeated string fileUUID = 3;
+}
+
+// post request, upload the file content
+message FilePostRequest {
+  string clientID = 1;
+  ClientType clientType = 2;
+  repeated FileData localData = 3;
+}
+
+message FilePreResponse{
+  int32 statusCode = 1;
+  string message = 2;
+}
+
+message FilePostResponse {
+  int32 statusCode = 1;
+  string message = 2;
+}
+
+service FileUploadService {
+  rpc HandleFilePreUpload (FilePreRequest) returns (FilePreResponse) {}
+  rpc HandleFilePostUpload (FilePostRequest) returns (FilePostResponse) {}
+}
